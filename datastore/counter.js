@@ -12,7 +12,8 @@ var counter = 0;
 // https://www.google.com/search?q=what+is+a+zero+padded+number%3F
 
 const zeroPaddedNumber = (num) => {
-  return sprintf('%05d', num);  // returns a formatted string,iddeallyyy :/
+  return sprintf('%05d', num);
+  // returns a formatted string,iddeallyyy :/
 };
 
 const readCounter = (callback) => { //takes serialized(?) file, if error, callback 0, if not, callback original number
@@ -44,7 +45,7 @@ exports.getNextUniqueId = (cb) => {
     // counter = id;
     writeCounter(++id, cb);
     return zeroPaddedNumber(id - 1);
-  })
+  });
 };
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////

@@ -8,24 +8,39 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  console.log(id);
-  // counter.getNextUniqueId((err, id) => {
-    var idTxt = `/${id}.txt`;
-  fs.writeFile(path.join(exports.dataDir, idTxt), text, (err) => {
-    if (err) {
-      throw ('error')
-    }
+  counter.getNextUniqueId((err, id) => {
+    fs.writeFile(path.join(exports.dataDir + '/' + id + '.txt'), text, (err) => {
+      if (err) {
+        throw 'error';
+      } else {
+        callback(null, { id, text });
+      }
+    })
   })
-  // items[id] = text;
-  callback(null, { id, text });
+  // var id = counter.getNextUniqueId();
+  // console.log(id);
+  // // counter.getNextUniqueId((err, id) => {
+  // var idTxt = `/${id}.txt`;
+  // fs.writeFile(path.join(exports.dataDir, idTxt), text, (err) => {
+  //   if (err) {
+  //     throw ('error');
+  //   }
+  // });
+  // // items[id] = text;
+  // callback(null, { id, text });
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
-  });
-  callback(null, data);
+  let result = [];
+  fs.readdir(exports.dataDir, (err, files) => {
+    files = files.map((file) => {
+      return {
+        id: file.slice(0,5),
+        text: file.slice(0,5)
+      }
+    })
+    callback(null, files);
+  })
 };
 
 exports.readOne = (id, callback) => {
