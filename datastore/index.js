@@ -43,51 +43,88 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  fs.readdir(exports.dataDir, (err, files) => {
-    console.log(files);
-    console.log(id);
-    // console.log(files[0].slice(0,5));
+  // fs.readFile(path.join(exports.dataDir, `${id}.txt`), (err, file) => {
+  //   // console.log(files);
+  //   // console.log(id);
+  //   // console.log(files[0].slice(0,5));
+  //   if (err) {
+  //     console.log(err);
+  //     // callback(err);
+  //     return;
+  //   } else {
+  //     // if (files.includes(id + '.txt') === false) {
+  //     //   console.log('file not found');
+  //     //   return;
+  //     // } else {
+  //     //   for (var i = 0; i < files.length; i++) {
+  //     //     if (files[i].slice(0, 5) === id) {
+  //     //       return {
+  //     //         id: files[i].slice(0, 5),
+  //     //         text: files[i].slice(0, 5)
+  //     //       };
+  //     //     }
+  //     //   }
+  //     callback(null, file);
+  //   }
+  // });
+
+  fs.readFile(path.join(exports.dataDir, '/' + id + '.txt'), 'utf8', (err, text) => {
     if (err) {
-      console.log(err);
-      return;
+      callback(err);
     } else {
-      if (files.includes(id + '.txt') === false) {
-        console.log('file not found');
-        return;
-      } else {
-        for (var i = 0; i < files.length; i++) {
-          if (files[i].slice(0, 5) === id) {
-            return {
-              id: files[i].slice(0, 5),
-              text: files[i].slice(0, 5)
-            };
-          }
-        }
-      }
+      callback(null, { id, text });
     }
-    callback(null, files);
-  });
+  })
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  fs.readFile(path.join(exports.dataDir, '/' + id + '.txt'), 'utf8', (err, oldText) => {
+    if (err) {
+      callback(err);
+    } else {
+      fs.writeFile(path.join(exports.dataDir, '/' + id + '.txt'), text, (err, text) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, { id, text });
+        }
+      });
+    }
+  });
+
+
+  // var item = items[id];
+  // if (!item) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   items[id] = text;
+  //   callback(null, { id, text });
+  // }
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+
+  // fs.readFile(path.join(exports.dataDir, '/' + id + '.txt'), 'utf8', (err, data) => {
+  //   if (err) {
+  //     callback(err);
+  //   } else {
+  fs.unlink(path.join(exports.dataDir, '/' + id + '.txt'), (err) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback();
+    }
+  });
+  //   }
+  // })
+//   var item = items[id];
+//   delete items[id];
+//   if (!item) {
+//     // report an error if item not found
+//     callback(new Error(`No item with id: ${id}`));
+//   } else {
+//     callback();
+//   }
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
