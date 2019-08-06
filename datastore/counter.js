@@ -12,10 +12,10 @@ var counter = 0;
 // https://www.google.com/search?q=what+is+a+zero+padded+number%3F
 
 const zeroPaddedNumber = (num) => {
-  return sprintf('%05d', num);
+  return sprintf('%05d', num);  // returns a formatted string,iddeallyyy :/
 };
 
-const readCounter = (callback) => {
+const readCounter = (callback) => { //takes serialized(?) file, if error, callback 0, if not, callback original number
   fs.readFile(exports.counterFile, (err, fileData) => {
     if (err) {
       callback(null, 0);
@@ -25,7 +25,7 @@ const readCounter = (callback) => {
   });
 };
 
-const writeCounter = (count, callback) => {
+const writeCounter = (count, callback) => { // takes serialized data and stores into exports.counterFile?
   var counterString = zeroPaddedNumber(count);
   fs.writeFile(exports.counterFile, counterString, (err) => {
     if (err) {
@@ -38,12 +38,14 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
+exports.getNextUniqueId = (cb) => {
+  // readCounter --> gives us value
+  readCounter((err, id) => {
+    // counter = id;
+    writeCounter(++id, cb);
+    return zeroPaddedNumber(id - 1);
+  })
 };
-
-
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
 
