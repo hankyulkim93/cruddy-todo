@@ -15,8 +15,8 @@ exports.create = (text, callback) => {
       } else {
         callback(null, { id, text });
       }
-    })
-  })
+    });
+  });
   // var id = counter.getNextUniqueId();
   // console.log(id);
   // // counter.getNextUniqueId((err, id) => {
@@ -34,12 +34,12 @@ exports.readAll = (callback) => {
   fs.readdir(exports.dataDir, (err, files) => {
     files = files.map((file) => {
       return {
-        id: file.slice(0,5),
-        text: file.slice(0,5)
-      }
-    })
+        id: file.slice(0, 5),
+        text: file.slice(0, 5)
+      };
+    });
     callback(null, files);
-  })
+  });
 };
 
 exports.readOne = (id, callback) => {
@@ -56,17 +56,17 @@ exports.readOne = (id, callback) => {
         return;
       } else {
         for (var i = 0; i < files.length; i++) {
-          if (files[i].slice(0,5) === id) {
+          if (files[i].slice(0, 5) === id) {
             return {
-              id: files[i].slice(0,5),
-              text: files[i].slice(0,5)
+              id: files[i].slice(0, 5),
+              text: files[i].slice(0, 5)
             };
           }
         }
       }
     }
     callback(null, files);
-  })
+  });
 };
 
 exports.update = (id, text, callback) => {
