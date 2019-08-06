@@ -8,33 +8,65 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  console.log(id);
-  // counter.getNextUniqueId((err, id) => {
-    var idTxt = `/${id}.txt`;
-  fs.writeFile(path.join(exports.dataDir, idTxt), text, (err) => {
-    if (err) {
-      throw ('error')
-    }
+  counter.getNextUniqueId((err, id) => {
+    fs.writeFile(path.join(exports.dataDir + '/' + id + '.txt'), text, (err) => {
+      if (err) {
+        throw 'error';
+      } else {
+        callback(null, { id, text });
+      }
+    })
   })
-  // items[id] = text;
-  callback(null, { id, text });
+  // var id = counter.getNextUniqueId();
+  // console.log(id);
+  // // counter.getNextUniqueId((err, id) => {
+  // var idTxt = `/${id}.txt`;
+  // fs.writeFile(path.join(exports.dataDir, idTxt), text, (err) => {
+  //   if (err) {
+  //     throw ('error');
+  //   }
+  // });
+  // // items[id] = text;
+  // callback(null, { id, text });
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
-  });
-  callback(null, data);
+  fs.readdir(exports.dataDir, (err, files) => {
+    files = files.map((file) => {
+      return {
+        id: file.slice(0,5),
+        text: file.slice(0,5)
+      }
+    })
+    callback(null, files);
+  })
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  fs.readdir(exports.dataDir, (err, files) => {
+    console.log(files);
+    console.log(id);
+    // console.log(files[0].slice(0,5));
+    if (err) {
+      console.log(err);
+      return;
+    } else {
+      if (files.includes(id + '.txt') === false) {
+        console.log('file not found');
+        return;
+      } else {
+        for (var i = 0; i < files.length; i++) {
+          if (files[i].slice(0,5) === id) {
+            return {
+              id: files[i].slice(0,5),
+              text: files[i].slice(0,5)
+            };
+          }
+        }
+      }
+    }
+    callback(null, files);
+  })
 };
 
 exports.update = (id, text, callback) => {
